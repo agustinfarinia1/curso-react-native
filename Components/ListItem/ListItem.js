@@ -7,7 +7,6 @@ export default function ListItem(props) {
 
     const itemHecho = (item) => {
         item.state = true;
-        console.log(item);
         setIsRender(!isRender);
     };
     return (

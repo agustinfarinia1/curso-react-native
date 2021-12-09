@@ -13,7 +13,6 @@ export default function App() {
     };
 
     const agregarItem = (item) => {
-        console.log(item);
         setLista([
             ...lista,
             {
