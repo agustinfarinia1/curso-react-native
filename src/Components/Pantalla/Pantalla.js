@@ -1,32 +1,40 @@
-import React, { useState } from "react";
-import { Text, View, StyleSheet, Dimensions } from "react-native";
-import InputTexto from "../InputTexto/InputTexto";
+import React from "react";
+import { Text, View, StyleSheet, Button } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-export default function Pantalla() {
-    const [numero, setNumero] = useState("");
-
-    const isPortrait = () => {
-        const dim = Dimensions.get("screen");
-        return dim.height >= dim.width;
-    };
-
-    console.log(isPortrait() ? "portrait" : "landscape");
-
+function Inicio({ navigation }) {
     return (
-        <View style={stylesPantalla.container}>
-            <Text style={stylesPantalla.text}>Ingrese numero:</Text>
-            <InputTexto numero={numero} setNumero={setNumero} />
+        <View
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+            <Text>Esto es la pantalla de inicio</Text>
+            <Button
+                title="Ir a Informacion"
+                onPress={() => navigation.navigate("Informacion")}
+            />
+        </View>
+    );
+}
+function Informacion() {
+    return (
+        <View
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+            <Text>Esto es Informacion</Text>
         </View>
     );
 }
 
-const stylesPantalla = StyleSheet.create({
-    container: {
-        marginTop: "1%",
-        height: "90%",
-        width: "90%",
-        alignItems: "center",
-        borderColor: "gray",
-        borderWidth: 1,
-    },
-});
+const Stack = createNativeStackNavigator();
+
+export default function Pantalla() {
+    return (
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="Home">
+                <Stack.Screen name="Inicio" component={Inicio} />
+                <Stack.Screen name="Informacion" component={Informacion} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+}
