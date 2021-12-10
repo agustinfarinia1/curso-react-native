@@ -1,8 +1,17 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Dimensions } from "react-native";
 import InputTexto from "../InputTexto/InputTexto";
+
 export default function Pantalla() {
     const [numero, setNumero] = useState("");
+
+    const isPortrait = () => {
+        const dim = Dimensions.get("screen");
+        return dim.height >= dim.width;
+    };
+
+    console.log(isPortrait() ? "portrait" : "landscape");
+
     return (
         <View style={stylesPantalla.container}>
             <Text style={stylesPantalla.text}>Ingrese numero:</Text>

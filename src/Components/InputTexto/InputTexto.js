@@ -15,7 +15,6 @@ export default function InputTexto(props) {
             <TextInput
                 style={stylesInput.input}
                 keyboardType="numeric"
-                placeholder="Ingrese numero..."
                 onChangeText={validarNumero}
                 maxLength={2}
                 value={props.numero}
@@ -23,6 +22,7 @@ export default function InputTexto(props) {
             <View style={stylesInput.containerButton}>
                 <Button onPress={() => vaciarInput()} title="Vaciar"></Button>
                 <Button
+                    style={stylesInput.boton}
                     onPress={() => confirmarNumero(props.numero)}
                     title="Confirmar"
                 ></Button>
@@ -43,10 +43,11 @@ const stylesInput = StyleSheet.create({
         borderColor: "grey",
         borderWidth: 1,
         height: "100%",
-        width: "50%",
+        width: "55%",
     },
     containerButton: {
-        width: "60%",
+        width: "55%",
+        height: 40,
         marginTop: "1%",
         flexDirection: "row",
         justifyContent: "space-between",
