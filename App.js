@@ -1,47 +1,35 @@
-import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
-import AddItem from "./Components/AddItem/AddItem";
-import ListItem from "./Components/ListItem/ListItem";
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import Pantalla from "./src/Components/Pantalla/Pantalla";
+import Titulo from "./src/Components/Titulo/Titulo";
 
 export default function App() {
-    const [id, setId] = useState(0);
-    const [item, setItem] = useState("");
-    const [lista, setLista] = useState([]);
-
-    const agregarLista = () => {
-        agregarItem(item);
-    };
-
-    const agregarItem = (item) => {
-        setLista([
-            ...lista,
-            {
-                id: `${item}${id}`,
-                value: item,
-                state: false,
-            },
-        ]);
-        setId(id + 1);
-    };
-
-    const borrarItem = (idItem) => {
-        setLista(lista.filter((item) => item.id !== idItem));
-    };
-
     return (
-        <SafeAreaView style={styles.container}>
-            <Text>Ingrese elementos:</Text>
-            <AddItem setItem={setItem} agregarLista={agregarLista} />
-            <ListItem lista={lista} borrarItem={borrarItem} />
-        </SafeAreaView>
+        <SafeAreaProvider>
+            <SafeAreaView style={styles.container}>
+                <Titulo style={styles.titulo} />
+                <View style={styles.containerPantalla}>
+                    <Pantalla />
+                </View>
+            </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
-
 const styles = StyleSheet.create({
     container: {
+        width: "100%",
         height: "100%",
-        flex: 1,
         alignItems: "center",
-        paddingTop: "5%",
+        backgroundColor: "red",
+    },
+    titulo: {
+        backgroundColor: "red",
+    },
+    containerPantalla: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: "white",
+        alignItems: "center",
     },
 });
