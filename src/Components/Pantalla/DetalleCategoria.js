@@ -1,32 +1,38 @@
 import React from "react";
 import {
+    FlatList,
     Text,
     View,
-    FlatList,
     StyleSheet,
     TouchableOpacity,
 } from "react-native";
+import { panesJson } from "../../data/panes";
 import { useNavigation } from "@react-navigation/native";
 
-export function Productos(props) {
-    const navigation = useNavigation();
+export function DetalleCategoria(props) {
+    const arregloPanes = panesJson.filter(
+        (p) => p.idCategoria == props.route.params.categoria
+    );
 
+    const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <FlatList
-                data={props.route.params.categoriasJson}
+                data={arregloPanes}
                 style={styles.FlatList}
                 renderItem={(data) => (
                     <TouchableOpacity
                         style={styles.containerItem}
                         onPress={() =>
-                            navigation.navigate("DetalleCategoria", {
-                                categoria: data.item.id,
-                                titulo: data.item.nombre,
+                            navigation.navigate("DetalleProducto", {
+                                producto: data.item,
+                                tituloDetalle: data.item.nombre,
                             })
                         }
                     >
                         <Text>{data.item.nombre}</Text>
+                        <Text>Cantidad:{data.item.cantidad}</Text>
+                        <Text>Precio: {data.item.precio}</Text>
                     </TouchableOpacity>
                 )}
                 keyExtractor={(item) => item.id}
@@ -52,11 +58,12 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     containerItem: {
-        width: "90%",
+        width: "70%",
         height: 60,
         alignSelf: "center",
-        justifyContent: "center",
+        justifyContent: "space-between",
         alignItems: "center",
+        flexDirection: "row",
         marginVertical: "5%",
         backgroundColor: "lightgreen",
         borderRadius: 10,
