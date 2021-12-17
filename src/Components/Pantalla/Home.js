@@ -5,15 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 export function Home() {
     const navigation = useNavigation();
 
-    return (
-        <View style={styles.container}>
-            <Text>Esto es el inicio</Text>
-            <Button
-                title="Productos"
-                onPress={() => navigation.navigate("Productos", {})}
-            />
-        </View>
-    );
+    return <View style={styles.container}></View>;
 }
 
 const styles = StyleSheet.create({
