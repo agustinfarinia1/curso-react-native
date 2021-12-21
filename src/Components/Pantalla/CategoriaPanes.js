@@ -7,24 +7,30 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { categoriaSeleccionada } from "../../store/actions/CategoriaAction";
 
-export function Productos(props) {
+export function CategoriaPanes(props) {
+    const categorias = useSelector((state) => state.categorias.categorias);
+    const dispatch = useDispatch();
     const navigation = useNavigation();
+
+    const handlerSelect = (item) => {
+        dispatch(categoriaSeleccionada(item.id));
+        navigation.navigate("DetalleCategoria", {
+            titulo: item.nombre,
+        });
+    };
 
     return (
         <View style={styles.container}>
             <FlatList
-                data={props.route.params.categoriasJson}
+                data={categorias}
                 style={styles.FlatList}
                 renderItem={(data) => (
                     <TouchableOpacity
                         style={styles.containerItem}
-                        onPress={() =>
-                            navigation.navigate("DetalleCategoria", {
-                                categoria: data.item.id,
-                                titulo: data.item.nombre,
-                            })
-                        }
+                        onPress={() => handlerSelect(data.item)}
                     >
                         <Text>{data.item.nombre}</Text>
                     </TouchableOpacity>

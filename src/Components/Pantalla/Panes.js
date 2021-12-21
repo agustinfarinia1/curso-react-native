@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     FlatList,
     Text,
@@ -6,15 +6,26 @@ import {
     StyleSheet,
     TouchableOpacity,
 } from "react-native";
-import { panesJson } from "../../data/panes";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { panSeleccionado, panesFiltrados } from "../../store/actions/PanAction";
 
-export function DetalleCategoria(props) {
-    const arregloPanes = panesJson.filter(
-        (p) => p.idCategoria == props.route.params.categoria
-    );
-
+export function Panes() {
     const navigation = useNavigation();
+    const dispatch = useDispatch();
+    const categoria = useSelector((state) => state.categorias.seleccionado);
+    const arregloPanes = useSelector((state) => state.panes.panesFiltrados);
+
+    useEffect(() => {
+        dispatch(panesFiltrados(categoria.id));
+    }, []);
+
+    const handlerPanSeleccionado = (pan) => {
+        dispatch(panSeleccionado(pan));
+        navigation.navigate("DetalleProducto", {
+            tituloDetalle: pan.nombre,
+        });
+    };
     return (
         <View style={styles.container}>
             <FlatList
@@ -23,12 +34,7 @@ export function DetalleCategoria(props) {
                 renderItem={(data) => (
                     <TouchableOpacity
                         style={styles.containerItem}
-                        onPress={() =>
-                            navigation.navigate("DetalleProducto", {
-                                producto: data.item,
-                                tituloDetalle: data.item.nombre,
-                            })
-                        }
+                        onPress={() => handlerPanSeleccionado(data.item)}
                     >
                         <Text>{data.item.nombre}</Text>
                         <Text>Cantidad:{data.item.cantidad}</Text>

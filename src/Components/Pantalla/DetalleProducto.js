@@ -1,13 +1,25 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Button, Text, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { agregarItem } from "../../store/actions/CarritoAction";
 
-export function DetalleProducto(props) {
-    console.log(props.route.params.producto);
+export function DetalleProducto() {
+    const producto = useSelector((state) => state.panes.seleccionado);
+    const dispatch = useDispatch();
+
+    const handlerAgregarCarrito = () => {
+        dispatch(agregarItem(producto));
+    };
+
     return (
         <View>
-            <Text>{props.route.params.producto.nombre}</Text>
-            <Text>{props.route.params.producto.cantidad}</Text>
-            <Text>{props.route.params.producto.precio}</Text>
+            <Text>{producto.nombre}</Text>
+            <Text>{producto.cantidad}</Text>
+            <Text>{producto.precio}</Text>
+            <Button
+                title="agregar al carrito"
+                onPress={handlerAgregarCarrito}
+            />
         </View>
     );
 }

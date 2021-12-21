@@ -3,13 +3,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-
-import { Productos } from "./Productos";
-import { categoriasJson } from "../../data/categorias";
-import { DetalleCategoria } from "./DetalleCategoria";
-import { DetalleProducto } from "./DetalleProducto";
-import CarritoScreen from "./CarritoScreen";
 import { StyleSheet, Text, View } from "react-native";
+
+import { CategoriaPanes } from "./Pantalla/CategoriaPanes";
+import { Panes } from "./Pantalla/Panes";
+import { DetalleProducto } from "./Pantalla/DetalleProducto";
+import CarritoScreen from "./Pantalla/CarritoScreen";
 
 const TiendaStack = createNativeStackNavigator();
 const CarritoStack = createNativeStackNavigator();
@@ -22,15 +21,14 @@ function tiendaStackRender() {
         >
             <TiendaStack.Screen
                 name="Productos"
-                component={Productos}
+                component={CategoriaPanes}
                 options={{
                     title: "Productos",
                 }}
-                initialParams={{ categoriasJson: categoriasJson }}
             />
             <TiendaStack.Screen
                 name="DetalleCategoria"
-                component={DetalleCategoria}
+                component={Panes}
                 options={({ route }) => ({ title: route.params.titulo })}
             />
             <TiendaStack.Screen
@@ -52,6 +50,9 @@ function carritoStackRender() {
             <CarritoStack.Screen
                 name="CarritoScreen"
                 component={CarritoScreen}
+                options={{
+                    title: "Carrito",
+                }}
             />
         </CarritoStack.Navigator>
     );
