@@ -11,33 +11,54 @@ import { detalleProducto } from "./Screen/DetalleProductoScreen";
 import CarritoScreen from "./Screen/CarritoScreen";
 import { Registro } from "./Screen/Registro";
 import { Logueo } from "./Screen/Logueo";
-import { auth } from "../firebase/database";
+import { auth, db } from "../firebase/database";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { OrdenesScreen } from "./Screen/OrdenesScreen";
+import { collection, getDocs } from "firebase/firestore/lite";
+import { PerfilScreen } from "./Screen/PerfilScreen";
 
 const TiendaStack = createNativeStackNavigator();
 const CarritoStack = createNativeStackNavigator();
+const OrdenesStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function Pantalla() {
     const [user, setUser] = useState();
-    //const [orders, setOrders] = useState([]);
+    const [ordenes, setOrdenes] = useState([]);
 
     useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const uid = user.uid;
-                console.log(user);
-                setUser(user);
-            } else {
-                setUser(null);
-            }
-        });
-    }, []);
+        if (user) {
+            //Obtención de las orders, y luego filtrado mediante email
+            (async () => {
+                const querySnapshot = await getDocs(collection(db, "ordenes"));
+                const ordersComplete = [];
+                querySnapshot.forEach((doc) => {
+                    //console.log(`${doc.id} => ${doc.data()}`);
+                    ordersComplete.push({ id: doc.id, ...doc.data() });
+                });
+                const ordersFiltered = ordersComplete.filter(
+                    (order) => order.comprador === auth.currentUser.email
+                );
+                //console.log(ordersComplete);
+                setOrdenes([...ordersFiltered]);
+            })();
+        }
+    }, [user]);
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            const uid = user.uid;
+            //console.log(user);
+            setUser(user);
+        } else {
+            setUser(null);
+        }
+    });
 
     const handleSignOut = () => {
         signOut(auth)
             .then(() => {
-                //setOrders([]);
+                setOrders([]);
                 // Sign-out successful.
             })
             .catch((error) => {
@@ -45,6 +66,103 @@ export default function Pantalla() {
             });
         return null;
     };
+
+    function tiendaStackRender() {
+        return (
+            <TiendaStack.Navigator
+                screenOptions={{
+                    headerStyle: {
+                        backgroundColor: "lightblue",
+                    },
+                }}
+            >
+                <TiendaStack.Screen
+                    name="CategoriasScreen"
+                    component={categoriaScreen}
+                    options={{
+                        title: "Productos",
+                    }}
+                />
+                <TiendaStack.Screen
+                    name="ProductosScreen"
+                    component={productoScreen}
+                    options={({ route }) => ({ title: route.params.titulo })}
+                />
+                <TiendaStack.Screen
+                    name="DetalleProductoScreen"
+                    component={detalleProducto}
+                    options={({ route }) => ({
+                        title: route.params.tituloDetalle,
+                    })}
+                />
+            </TiendaStack.Navigator>
+        );
+    }
+
+    function carritoStackRender() {
+        return (
+            <CarritoStack.Navigator
+                screenOptions={{
+                    headerStyle: { backgroundColor: "lightblue" },
+                }}
+            >
+                <CarritoStack.Screen
+                    name="CarritoScreen"
+                    component={CarritoScreen}
+                    options={{
+                        title: "Carrito",
+                    }}
+                />
+            </CarritoStack.Navigator>
+        );
+    }
+
+    function ordenesStackRender() {
+        return (
+            <OrdenesStack.Navigator
+                screenOptions={{
+                    headerStyle: { backgroundColor: "lightblue" },
+                }}
+            >
+                <OrdenesStack.Screen
+                    name="OrdenesScreen"
+                    children={() => <OrdenesScreen ordenes={ordenes} />}
+                    options={{
+                        title: "MisOrdenes",
+                    }}
+                />
+            </OrdenesStack.Navigator>
+        );
+    }
+
+    function perfilStackRender() {
+        return (
+            <OrdenesStack.Navigator
+                screenOptions={{
+                    headerStyle: { backgroundColor: "lightblue" },
+                }}
+            >
+                <OrdenesStack.Screen
+                    name="PerfilScreen"
+                    children={() => <PerfilScreen usuario={user} />}
+                    options={{
+                        title: "Perfil",
+                    }}
+                />
+            </OrdenesStack.Navigator>
+        );
+    }
+
+    const styles = StyleSheet.create({
+        container: {
+            width: "100%",
+            height: "100%",
+            alignItems: "center",
+        },
+        logOut: {
+            marginRight: 15,
+        },
+    });
 
     return (
         <NavigationContainer>
@@ -90,7 +208,7 @@ export default function Pantalla() {
                         />
                         <Tab.Screen
                             name="Ordenes"
-                            component={carritoStackRender}
+                            component={ordenesStackRender}
                             options={{
                                 tabBarIcon: ({ focused }) => (
                                     <View style={styles.container}>
@@ -106,7 +224,7 @@ export default function Pantalla() {
                         />
                         <Tab.Screen
                             name="Perfil"
-                            component={tiendaStackRender}
+                            component={perfilStackRender}
                             options={{
                                 tabBarIcon: ({ focused }) => (
                                     <View style={styles.container}>
@@ -177,62 +295,3 @@ export default function Pantalla() {
         </NavigationContainer>
     );
 }
-
-function tiendaStackRender() {
-    return (
-        <TiendaStack.Navigator
-            screenOptions={{
-                headerStyle: {
-                    backgroundColor: "lightblue",
-                },
-            }}
-        >
-            <TiendaStack.Screen
-                name="CategoriasScreen"
-                component={categoriaScreen}
-                options={{
-                    title: "Productos",
-                }}
-            />
-            <TiendaStack.Screen
-                name="ProductosScreen"
-                component={productoScreen}
-                options={({ route }) => ({ title: route.params.titulo })}
-            />
-            <TiendaStack.Screen
-                name="DetalleProductoScreen"
-                component={detalleProducto}
-                options={({ route }) => ({
-                    title: route.params.tituloDetalle,
-                })}
-            />
-        </TiendaStack.Navigator>
-    );
-}
-
-function carritoStackRender() {
-    return (
-        <CarritoStack.Navigator
-            screenOptions={{ headerStyle: { backgroundColor: "lightblue" } }}
-        >
-            <CarritoStack.Screen
-                name="CarritoScreen"
-                component={CarritoScreen}
-                options={{
-                    title: "Carrito",
-                }}
-            />
-        </CarritoStack.Navigator>
-    );
-}
-
-const styles = StyleSheet.create({
-    container: {
-        width: "100%",
-        height: "100%",
-        alignItems: "center",
-    },
-    logOut: {
-        marginRight: 15,
-    },
-});
